@@ -32,20 +32,16 @@ class OBF_OT_open_blend_folder(Operator):
 		return True
 
 	def execute(self, context):
-		prefs = get_addon_preferences()
-		command = []
-		if prefs.override_command:
-			command = [prefs.override_command]
-		else:
-			command = ["explorer"]
+		if not bpy.data.is_saved:
+			self.report({"ERROR"}, "Blend not saved!")
+			return {"CANCELLED"}
 		
-		# add args
-		command.append(os.path.dirname(os.path.realpath(bpy.data.filepath)))
+		path = os.path.dirname(bpy.path.abspath("//"))
 		
 		# run file browser command
-		self.report({"INFO"}, f"Opening {command[1]} in file browser")
-		print(f"Running: {' '.join(command)}")
-		subprocess.run(command)
+		self.report({"INFO"}, f"Opening in file browser: {path}")
+		print(f"Opening: {path}")
+		os.startfile(path)
 		
 		return {'FINISHED'}
 
